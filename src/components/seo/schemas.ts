@@ -1,7 +1,10 @@
+import { services } from "@/lib/content";
 import { absoluteUrl } from "@/lib/seo";
 import { siteConfig } from "@/lib/site";
 
 export const organizationId = `${siteConfig.url}/#organization`;
+
+const areaServed = siteConfig.markets.map((name) => ({ "@type": "Place", name }));
 
 export function organizationSchema() {
   return {
@@ -11,15 +14,17 @@ export function organizationSchema() {
     name: siteConfig.name,
     slogan: siteConfig.tagline,
     url: siteConfig.url,
-    logo: absoluteUrl("/icon.svg"),
+    logo: { "@type": "ImageObject", url: absoluteUrl("/logo.png"), width: 512, height: 512 },
+    image: absoluteUrl("/logo.png"),
     description: siteConfig.description,
-    areaServed: siteConfig.markets.map((name) => ({ "@type": "Country", name })),
+    areaServed,
     knowsAbout: [
       "Influencer marketing",
-      "Technology influencer marketing",
-      "YouTube creator partnerships",
-      "SaaS influencer marketing",
-      "Influencer discovery and vetting",
+      "YouTube influencer marketing",
+      "Social media influencer marketing",
+      "Brand and creator partnerships",
+      "Creator discovery and vetting",
+      "Influencer campaign management",
     ],
   };
 }
@@ -34,15 +39,29 @@ export function websiteSchema() {
   };
 }
 
-export function serviceSchema({ name, description, path, serviceType }: { name: string; description: string; path: string; serviceType: string }) {
+/** One Service with an OfferCatalog of the five service categories. */
+export function servicesSchema(path: string) {
   return {
     "@context": "https://schema.org",
     "@type": "Service",
-    name,
-    description,
-    serviceType,
+    name: "Influencer marketing for brands with YouTube and social media creators",
+    serviceType: "Influencer Marketing Agency",
     url: absoluteUrl(path),
     provider: { "@id": organizationId },
-    areaServed: siteConfig.markets.map((name) => ({ "@type": "Country", name })),
+    areaServed,
+    audience: { "@type": "BusinessAudience", audienceType: "Brands partnering with YouTube and social media creators" },
+    hasOfferCatalog: {
+      "@type": "OfferCatalog",
+      name: "Influencer marketing services",
+      itemListElement: services.map((service) => ({
+        "@type": "Offer",
+        itemOffered: {
+          "@type": "Service",
+          name: service.title,
+          description: `${service.summary} ${service.why}`,
+          url: absoluteUrl(`${path}#${service.slug}`),
+        },
+      })),
+    },
   };
 }

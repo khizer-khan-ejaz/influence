@@ -68,6 +68,8 @@ export function MobileNavigation() {
                 <li key={item.href}>
                   <Link
                     href={item.href}
+                    // Same-page anchors (e.g. /#approach) don't change the pathname, so close explicitly.
+                    onClick={() => setOpen(false)}
                     aria-current={isActive(pathname, item.href) ? "page" : undefined}
                     className="font-display flex items-center justify-between py-4 text-3xl font-semibold tracking-tight aria-[current=page]:text-lime"
                   >

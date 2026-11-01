@@ -12,6 +12,7 @@ import { ShareLinks } from "@/components/sections/ShareLinks";
 import { api } from "@/lib/api";
 import { formatDate } from "@/lib/format";
 import { absoluteUrl, pageMetadata } from "@/lib/seo";
+import { siteConfig } from "@/lib/site";
 
 export const revalidate = 300;
 
@@ -95,7 +96,7 @@ export default async function ArticlePage({ params }: PageProps<"/insights/[slug
               <p className="font-semibold">{authorName}</p>
               {article.author?.bio && <p className="text-slate mt-1 max-w-md text-sm">{article.author.bio}</p>}
             </div>
-            <ShareLinks url={absoluteUrl(path)} title={article.title} />
+            <ShareLinks url={absoluteUrl(path)} />
           </footer>
         </div>
       </article>
@@ -129,7 +130,7 @@ export default async function ArticlePage({ params }: PageProps<"/insights/[slug
           image: article.featured_image ?? absoluteUrl("/opengraph-image"),
           articleSection: article.category.name,
           author: article.author
-            ? { "@type": "Organization", name: article.author.name, url: absoluteUrl("/about") }
+            ? { "@type": "Organization", name: article.author.name, url: siteConfig.url }
             : { "@id": organizationId },
           publisher: { "@id": organizationId },
         }}

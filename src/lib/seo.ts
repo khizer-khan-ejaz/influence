@@ -15,10 +15,11 @@ type PageMeta = {
 };
 
 // Pages that set their own openGraph object replace the file-based image, so reference it explicitly.
-const defaultImage = { url: "/opengraph-image", width: 1200, height: 630, alt: `${siteConfig.name}: Make Influence Work Harder.` };
+const defaultImage = { url: "/opengraph-image", width: 1200, height: 630, alt: `${siteConfig.name}: Influencer Marketing for Brands.` };
 
 export function absoluteUrl(path: string) {
-  return `${siteConfig.url}${path === "/" ? "" : path}`;
+  // The homepage keeps its trailing slash (https://hiqfluence.com/), the form Google shows and links to.
+  return `${siteConfig.url}${path}`;
 }
 
 export function pageMetadata({

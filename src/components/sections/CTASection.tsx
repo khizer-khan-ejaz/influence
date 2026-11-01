@@ -4,7 +4,7 @@ import { PrimaryButton } from "../ui/Button";
 
 export function CTASection({
   title = "Your Next Campaign Starts With the Right Creator.",
-  body = "Tell us what you're building. We'll help identify the creators who can bring your brand closer to its audience.",
+  body = "Tell us what you're launching and who needs to hear about it. We'll suggest where to start.",
   cta = "Start a Conversation",
   href = "/contact",
 }: {

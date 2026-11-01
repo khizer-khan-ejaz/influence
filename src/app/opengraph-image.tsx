@@ -1,6 +1,6 @@
 import { ImageResponse } from "next/og";
 
-export const alt = "HiQfluence: Make Influence Work Harder. Influencer marketing for technology and modern consumer brands.";
+export const alt = "HiQfluence: Influencer Marketing for Brands. Unify Creators × Brands.";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -23,10 +23,10 @@ export default function OpengraphImage() {
           Hi<span style={{ color: "#c8f53c", fontStyle: "italic" }}>Q</span>fluence
         </div>
         <div style={{ display: "flex", flexDirection: "column" }}>
-          <div style={{ fontSize: 104, fontWeight: 700, letterSpacing: -5, lineHeight: 0.95 }}>Make Influence</div>
-          <div style={{ fontSize: 104, fontWeight: 700, letterSpacing: -5, lineHeight: 0.95, color: "#c8f53c" }}>Work Harder.</div>
+          <div style={{ fontSize: 96, fontWeight: 700, letterSpacing: -4, lineHeight: 0.98 }}>Influencer Marketing</div>
+          <div style={{ fontSize: 96, fontWeight: 700, letterSpacing: -4, lineHeight: 0.98, color: "#c8f53c" }}>for Brands.</div>
         </div>
-        <div style={{ display: "flex", fontSize: 28, color: "#9aa0b8" }}>Unify Creators × Brands · Influencer marketing for technology & modern consumer brands</div>
+        <div style={{ display: "flex", fontSize: 28, color: "#9aa0b8" }}>Unify Creators × Brands · YouTube & Social Media Creators</div>
       </div>
     ),
     size,

@@ -1,17 +1,6 @@
 import "server-only";
 
-import type {
-  ArticleDetail,
-  ArticleSummary,
-  CaseStudyDetail,
-  CaseStudyFilters,
-  CaseStudySummary,
-  Category,
-  IndustryDetail,
-  IndustrySummary,
-  Paginated,
-  Service,
-} from "./types";
+import type { ArticleDetail, ArticleSummary, Category, Paginated } from "./types";
 
 const API_URL = (process.env.API_INTERNAL_URL ?? "http://localhost:8000/api/v1").replace(/\/$/, "");
 
@@ -61,14 +50,7 @@ async function requestOrNull<T>(path: string): Promise<T | null> {
 }
 
 export const api = {
-  services: () => request<Service[]>("services/"),
-  industries: () => request<IndustrySummary[]>("industries/"),
-  industry: (slug: string) => requestOrNull<IndustryDetail>(`industries/${encodeURIComponent(slug)}/`),
-  caseStudies: (query?: { industry?: string; objective?: string; featured?: "true"; page?: number }) =>
-    request<Paginated<CaseStudySummary>>("case-studies/", query),
-  caseStudyFilters: () => request<CaseStudyFilters>("case-studies/filters/"),
-  caseStudy: (slug: string) => requestOrNull<CaseStudyDetail>(`case-studies/${encodeURIComponent(slug)}/`),
-  articles: (query?: { category?: string; search?: string; page?: number; page_size?: number }) =>
+  articles: (query?: { category?: string; page?: number; page_size?: number }) =>
     request<Paginated<ArticleSummary>>("insights/", query),
   article: (slug: string) => requestOrNull<ArticleDetail>(`insights/${encodeURIComponent(slug)}/`),
   categories: () => request<Category[]>("insights/categories/"),

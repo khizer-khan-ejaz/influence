@@ -17,8 +17,8 @@ export default function PrivacyPage() {
         <div className="prose-article max-w-[44rem]">
           <h2>Information we collect</h2>
           <p>
-            When you submit our contact form, we collect the details you provide: your name, business email, company, company website, industry,
-            campaign objective, estimated budget and any additional information you choose to share. To protect the form from abuse, we also record
+            When you submit our contact form, we collect the details you provide: your name, email address, company and the
+            description of what you are working on. To protect the form from abuse, we also record
             the IP address and browser user agent associated with the submission.
           </p>
           <h2>How we use it</h2>

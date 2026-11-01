@@ -1,33 +1,29 @@
 "use client";
 
+import Link from "next/link";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useId, useRef, useState, type ReactNode } from "react";
-import { useForm, type FieldPath, type UseFormRegisterReturn } from "react-hook-form";
+import { useForm, type FieldPath } from "react-hook-form";
 import { ArrowUpRight, Check, CircleAlert, LoaderCircle } from "lucide-react";
 import { z } from "zod";
 
-import { budgetOptions, industryOptions, objectiveOptions } from "@/lib/options";
-
 const API_URL = (process.env.NEXT_PUBLIC_API_URL ?? "/api/v1").replace(/\/$/, "");
 
-const values = <T extends readonly { value: string }[]>(options: T) =>
-  options.map((o) => o.value) as [T[number]["value"], ...T[number]["value"][]];
-
-const websitePattern = /^(https?:\/\/)?([a-z0-9-]+\.)+[a-z]{2,}(\/\S*)?$/i;
+/*
+ * The inquiries API also stores industry, objective and budget. The form no longer asks for them,
+ * so neutral "not specified" values are sent; the details come from the message instead.
+ */
+const unaskedFields = { industry: "other", campaign_objective: "not_sure", estimated_budget: "undecided" } as const;
 
 const schema = z.object({
   name: z.string().trim().min(2, "Please enter your full name.").max(120, "Please keep this under 120 characters."),
-  email: z.email("Please enter a valid business email address.").max(254),
+  email: z.email("Please enter a valid email address.").max(254),
   company: z.string().trim().min(2, "Please enter your company name.").max(160),
-  website: z
+  message: z
     .string()
     .trim()
-    .max(300)
-    .refine((v) => v === "" || websitePattern.test(v), "Please enter a valid website, e.g. yourcompany.com."),
-  industry: z.enum(values(industryOptions), { error: "Please choose an industry." }),
-  campaign_objective: z.enum(values(objectiveOptions), { error: "Please choose a campaign objective." }),
-  estimated_budget: z.enum(values(budgetOptions), { error: "Please choose a budget range." }),
-  message: z.string().trim().max(5000, "Please keep this under 5,000 characters."),
+    .min(10, "A sentence or two is enough: what you're launching and who it's for.")
+    .max(5000, "Please keep this under 5,000 characters."),
   fax_number: z.string().optional(),
 });
 
@@ -50,7 +46,7 @@ export function ContactForm() {
   } = useForm<FormValues>({
     resolver: zodResolver(schema),
     mode: "onTouched",
-    defaultValues: { name: "", email: "", company: "", website: "", message: "", fax_number: "" },
+    defaultValues: { name: "", email: "", company: "", message: "", fax_number: "" },
   });
 
   useEffect(() => {
@@ -63,7 +59,7 @@ export function ContactForm() {
       const response = await fetch(`${API_URL}/inquiries/`, {
         method: "POST",
         headers: { "Content-Type": "application/json", Accept: "application/json" },
-        body: JSON.stringify({ ...data, started_at: startedAt }),
+        body: JSON.stringify({ ...data, ...unaskedFields, started_at: startedAt }),
       });
       const body: unknown = await response.json().catch(() => ({}));
 
@@ -81,7 +77,10 @@ export function ContactForm() {
             mapped = true;
           }
         }
-        setStatus({ state: "error", message: "Please review the highlighted fields and try again." });
+        setStatus({
+          state: "error",
+          message: mapped ? "Please review the highlighted fields and try again." : "We couldn't send your message. Please try again in a few minutes.",
+        });
         return;
       }
       if (response.status === 429) {
@@ -100,10 +99,17 @@ export function ContactForm() {
         <span className="bg-lime text-ink flex size-12 items-center justify-center rounded-full">
           <Check aria-hidden className="size-6" strokeWidth={3} />
         </span>
-        <h2 className="text-title font-semibold">Inquiry received</h2>
+        <h2 className="text-title font-semibold">Thanks, we&apos;ve got it.</h2>
         <p className="text-paper/75 max-w-md text-lg leading-relaxed">{status.message}</p>
+        <p className="text-paper/75 max-w-md leading-relaxed">
+          Next step: watch your inbox for our reply. Meanwhile,{" "}
+          <Link href="/insights" className="text-paper underline underline-offset-4">
+            browse our insights
+          </Link>
+          .
+        </p>
         <button type="button" onClick={() => setStatus({ state: "idle" })} className="text-lime font-semibold underline underline-offset-4">
-          Send another inquiry
+          Send another message
         </button>
       </div>
     );
@@ -114,31 +120,20 @@ export function ContactForm() {
       <Field label="Name" error={errors.name?.message} required>
         {(props) => <input {...props} {...register("name")} autoComplete="name" />}
       </Field>
-      <Field label="Business email" error={errors.email?.message} required>
+      <Field label="Email address" error={errors.email?.message} required>
         {(props) => <input {...props} {...register("email")} type="email" autoComplete="email" inputMode="email" />}
       </Field>
-      <Field label="Company" error={errors.company?.message} required>
+      <Field label="Company" error={errors.company?.message} required className="sm:col-span-2">
         {(props) => <input {...props} {...register("company")} autoComplete="organization" />}
       </Field>
-      <Field label="Company website" error={errors.website?.message} hint="Optional">
-        {(props) => <input {...props} {...register("website")} type="url" inputMode="url" autoComplete="url" placeholder="yourcompany.com" />}
-      </Field>
-      <Field label="Industry" error={errors.industry?.message} required>
-        {(props) => <Select props={props} registration={register("industry")} options={industryOptions} />}
-      </Field>
-      <Field label="Campaign objective" error={errors.campaign_objective?.message} required>
-        {(props) => <Select props={props} registration={register("campaign_objective")} options={objectiveOptions} />}
-      </Field>
-      <Field label="Estimated budget" error={errors.estimated_budget?.message} required className="sm:col-span-2">
-        {(props) => <Select props={props} registration={register("estimated_budget")} options={budgetOptions} />}
-      </Field>
       <Field
-        label="Additional information"
+        label="What are you working on?"
         error={errors.message?.message}
-        hint="Optional. Product, timing, markets, creators you admire…"
+        hint="Your product, who it's for and what you'd like creators to help with."
+        required
         className="sm:col-span-2"
       >
-        {(props) => <textarea {...props} {...register("message")} rows={5} className={`${props.className} min-h-36 resize-y py-3`} />}
+        {(props) => <textarea {...props} {...register("message")} rows={6} className={`${props.className} min-h-40 resize-y py-3`} />}
       </Field>
 
       {/* Honeypot: hidden from people and assistive technology, often filled in by bots. */}
@@ -177,7 +172,7 @@ export function ContactForm() {
               </>
             ) : (
               <>
-                Send inquiry
+                Send message
                 <ArrowUpRight aria-hidden className="size-5" />
               </>
             )}
@@ -239,29 +234,6 @@ function Field({
         </p>
       )}
     </div>
-  );
-}
-
-function Select({
-  props,
-  registration,
-  options,
-}: {
-  props: ControlProps;
-  registration: UseFormRegisterReturn;
-  options: readonly { value: string; label: string }[];
-}) {
-  return (
-    <select {...props} {...registration} defaultValue="" className={`${props.className} appearance-none bg-[url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='none' stroke='%230a0f24' stroke-width='2'%3E%3Cpath d='m4 6 4 4 4-4'/%3E%3C/svg%3E")] bg-[position:right_1rem_center] bg-no-repeat pr-10`}>
-      <option value="" disabled>
-        Select…
-      </option>
-      {options.map((option) => (
-        <option key={option.value} value={option.value}>
-          {option.label}
-        </option>
-      ))}
-    </select>
   );
 }
 

@@ -21,12 +21,23 @@ const instrumentSerif = Instrument_Serif({
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.url),
-  title: { default: `${siteConfig.name} | Technology Influencer Marketing Agency`, template: `%s | ${siteConfig.name}` },
+  title: { default: `${siteConfig.name} | Influencer Marketing Agency for Brands`, template: `%s | ${siteConfig.name}` },
   description: siteConfig.description,
   applicationName: siteConfig.name,
+  // Explicit crawl directives so Google may index pages and show full snippets and large image previews.
+  // Pages that pass noIndex to pageMetadata override this with their own robots value.
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: { index: true, follow: true, "max-snippet": -1, "max-image-preview": "large", "max-video-preview": -1 },
+  },
   openGraph: { siteName: siteConfig.name, type: "website", locale: "en_US" },
   twitter: { card: "summary_large_image" },
   formatDetection: { telephone: false },
+  // Google Search Console HTML-tag verification. Omitted when the env var is unset.
+  ...(process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION
+    ? { verification: { google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION } }
+    : {}),
 };
 
 export const viewport: Viewport = {

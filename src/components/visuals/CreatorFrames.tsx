@@ -102,22 +102,47 @@ export function StatusChip({ children, className = "" }: { children: string; cla
   );
 }
 
-/** Asymmetric hero composition: long-form review, short-form clip and workflow status chips. */
+/** A professional-network style feed post (e.g. LinkedIn) marked as a paid partnership. */
+export function PostFrame({ author, role, body, className = "" }: { author: string; role: string; body: string; className?: string }) {
+  return (
+    <figure className={`bg-paper text-ink rounded-[6px] p-4 shadow-[0_40px_80px_-30px_rgb(0_0_0/0.6)] ring-1 ring-black/5 ${className}`}>
+      <div className="flex items-center gap-3">
+        <span aria-hidden className="size-9 shrink-0 rounded-full bg-[radial-gradient(circle_at_30%_30%,#5c6eff,#1b2350)]" />
+        <div className="min-w-0">
+          <p className="truncate text-[0.8rem] font-semibold">{author}</p>
+          <p className="text-slate truncate text-[0.68rem]">{role}</p>
+        </div>
+        <span className="bg-ink/5 text-slate ml-auto shrink-0 rounded-sm px-1.5 py-0.5 text-[0.58rem] font-semibold tracking-wide uppercase">Partner</span>
+      </div>
+      <figcaption className="mt-3 text-[0.8rem] leading-snug">{body}</figcaption>
+      <div aria-hidden className="border-ink/10 mt-3 flex gap-3 border-t pt-2.5">
+        <span className="bg-ink/15 h-1.5 w-8 rounded-full" />
+        <span className="bg-ink/15 h-1.5 w-10 rounded-full" />
+        <span className="bg-ink/15 h-1.5 w-6 rounded-full" />
+      </div>
+    </figure>
+  );
+}
+
+/** Hero composition: long-form video, a professional feed post and a short-form clip. Illustrative, not real creators. */
 export function CreatorCollage() {
   return (
     <div
       role="img"
-      aria-label="Illustration of creator content formats: a long-form YouTube review with a sponsored segment highlighted on the timeline, and a vertical short-form clip labelled as a paid partnership."
-      className="relative mx-auto w-full max-w-[38rem] pt-6 pb-10 lg:pt-0"
+      aria-label="Illustration of creator content across channels: a long-form video walkthrough with a sponsored segment, a LinkedIn-style post marked as a partnership, and a vertical short-form clip."
+      className="relative mx-auto w-full max-w-[38rem] pt-6 pb-28 lg:pt-0"
     >
-      <VideoFrame scene="studio" label="Long-form review · YouTube" segment="Integration 06:12 – 07:05" className="w-[88%] [&_figcaption]:pr-[36%] sm:[&_figcaption]:pr-[30%]" />
-      <div className="absolute right-0 bottom-0 w-[36%] translate-y-6 sm:w-[32%]">
-        <PhoneFrame scene="warm" caption="Day-one set-up: what I'd change" />
+      <VideoFrame scene="studio" label="Product walkthrough · YouTube" segment="Partner segment 06:12" className="w-[86%]" />
+      <PostFrame
+        author="Engineering lead"
+        role="Creator · LinkedIn"
+        body="Three workflows I handed to an AI agent this quarter, and the one I took back."
+        className="absolute bottom-0 left-0 w-[60%] sm:w-[52%]"
+      />
+      <div className="absolute right-0 bottom-0 w-[30%] translate-y-8 sm:w-[26%]">
+        <PhoneFrame scene="warm" caption="Day one with the new stack" />
       </div>
       <StatusChip className="absolute top-0 right-[6%] sm:top-[-1rem]">Audience vetted</StatusChip>
-      <div className="absolute top-[38%] left-[-1rem] hidden sm:block">
-        <StatusChip>Brief approved</StatusChip>
-      </div>
     </div>
   );
 }

@@ -1,12 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { Check, Link as LinkIcon, Mail } from "lucide-react";
+import { Check, Link as LinkIcon } from "lucide-react";
 
-export function ShareLinks({ url, title }: { url: string; title: string }) {
+export function ShareLinks({ url }: { url: string }) {
   const [copied, setCopied] = useState(false);
   const encodedUrl = encodeURIComponent(url);
-  const encodedTitle = encodeURIComponent(title);
   const item = "border-ink/20 hover:border-ink inline-flex min-h-10 items-center gap-2 rounded-full border px-4 text-sm font-medium transition-colors";
 
   const copy = async () => {
@@ -24,13 +23,6 @@ export function ShareLinks({ url, title }: { url: string; title: string }) {
       <span className="eyebrow text-slate mr-1">Share</span>
       <a className={item} href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodedUrl}`} target="_blank" rel="noopener noreferrer">
         LinkedIn<span className="sr-only"> (opens in a new tab)</span>
-      </a>
-      <a className={item} href={`https://x.com/intent/post?url=${encodedUrl}&text=${encodedTitle}`} target="_blank" rel="noopener noreferrer">
-        X<span className="sr-only"> (opens in a new tab)</span>
-      </a>
-      <a className={item} href={`mailto:?subject=${encodedTitle}&body=${encodedUrl}`}>
-        <Mail aria-hidden className="size-4" />
-        Email
       </a>
       <button type="button" onClick={copy} className={item}>
         {copied ? <Check aria-hidden className="size-4" /> : <LinkIcon aria-hidden className="size-4" />}
